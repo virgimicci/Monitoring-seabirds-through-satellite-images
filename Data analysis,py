@@ -1,0 +1,43 @@
+import pandas as pd
+import numpy as np
+import os
+from functions import classification
+import geopy
+
+
+filepath = os.path.abspath('') # it returns the wd, this line is imp since we work locally from different devices
+df = pd.read_csv('Data/FileberteAnalisiIndividuale.csv')
+
+# Creation of a new col where we classify 
+# the bird action of Travelling(T), Foraging (F) and Resting (R)
+# in relation to their speed velocity
+# Where: 
+# > 10 Km/h T
+# < 5 Km/h R
+# 5 Km/h < F < 10 Km/h
+
+# df['birds_activity'] = df.apply(classification, axis=1)
+
+# sum(df['birds_activity'] == "F") # 1617
+
+# Creation of a df with just foraging data
+
+#df_F = df[df["birds_activity"] == "F"]
+
+df["time"] =pd.to_timedelta(df['UTC_time'])
+df["interval"]=df.groupby("device_id").time.diff().dt.seconds.div(60)
+
+#for row in df.rows:
+ #   if df["speed_km_h"] > 10:
+  #      if 8 < df.groupby("device_id").time.diff().dt.seconds.div(60) < 15:
+
+# Creating new col with shifted values of lat and long to calculate distances
+df['Latitude2'] = df.groupby("device_id")["Latitude"].shift(1)
+df['Longitude2'] = df.groupby("device_id")["Longitude"].shift(1)
+
+df['geo_dist'] = df.apply(lambda x: geopy.distance.geodesic((x['Latitude'], x['Longitude']),(x['Latitude2'], x['Longitude2'])) if x['Latitude2'] > 0 or x['Longitude2'] > 0 else 0)
+df['distance_km'] = df.apply(lambda row: distance(row['point'], row['point_next']).km if row['point_next'] is not None else float('nan'), axis=1)
+
+for row in df.rows:
+    df.groupby("device_id")
+
