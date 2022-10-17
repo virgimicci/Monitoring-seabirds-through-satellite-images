@@ -1,8 +1,11 @@
 
+import math
+import pandas as pd
+
 def classification(row):
-    if row["speed_km_h"] > 10:
-        return "T"
-    if row["speed_km_h"] < 5:
+    if row["tortuosity index"] < 2.5:
+        return "R"
+    if row["tortuosity index"]  < 5:
         return "R"
     else:
         return "F"
@@ -22,8 +25,5 @@ def distance(origin, destination):
 
     return d
 
-def tortuosity(corda, arco):
-    t = corda/arco
 
-    return t
     
