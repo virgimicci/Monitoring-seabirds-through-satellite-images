@@ -2,15 +2,7 @@
 import math
 import pandas as pd
 
-def classification(row):
-    if row["tortuosity index"] < 2.5:
-        return "R"
-    if row["tortuosity index"]  < 5:
-        return "R"
-    else:
-        return "F"
-
-
+# Function to calculate distance among two points
 def distance(origin, destination):
     lat1, lon1 = origin
     lat2, lon2 = destination
@@ -24,6 +16,26 @@ def distance(origin, destination):
     d = radius * c
 
     return d
+
+# Function to classify birds activity 
+# where:
+# Speed  < 2.5 m/s the bird is resting
+# Speed > 2.5 the bird is travelling or foraging
+# these are discriminated by the tortuosity index (TI) where:
+# TI < 0.98 the bird is foraging
+# TI > 0.98 the bird is travelling
+
+def classification(row):
+    if row["speed_m_s"] < 2.5:
+        return "R"
+    else:
+        if row["tortuosity index"] < 0.98:
+            return "F"
+        else:
+            return "T"
+
+
+
 
 
     
