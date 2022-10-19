@@ -19,11 +19,12 @@ df[['Latitude3', 'Longitude3']] = df[['Latitude', 'Longitude']].shift(-2)
 # but it gives me problem while I try to sum the values for the df["arco"], REMEMBER TO TRY TO FIX THE PROB 
 df['geo_dist'] = df.apply(lambda x: distance((x['Latitude'], x['Longitude']) , (x['Latitude2'], x['Longitude2'])) if x['Latitude2'] > 0 or x['Longitude2'] > 0 else 0, axis=1)
 
-# let's calculate the arc for each row which is given be the sum of the following two rows of distance
-df["arco"] = df.groupby("device_id")["geo_dist"].apply(lambda x: x.shift(-1) + x.shift(-2))
-df["corda"] = df.apply(lambda x: geopy.distance.geodesic((x['Latitude'], x['Longitude']),(x['Latitude3'], x['Longitude3'])) if x['Latitude3'] > 0 or x['Longitude3'] > 0 else 0, axis =1)
+# let's calculate the arc for each point which is the distance among three consecutive points 
+df["arc"] = df.groupby("device_id")["geo_dist"].apply(lambda x: x + x.shift(-1))
+# Let's calculate the chord which is the distance between a point and the second consecutive 
+df["chord"] = df.apply(lambda x: geopy.distance.geodesic((x['Latitude'], x['Longitude']),(x['Latitude3'], x['Longitude3'])) if x['Latitude3'] > 0 or x['Longitude3'] > 0 else 0, axis =1)
 
-# i have to transform 0 value in NaN oterwise I cannot divide because I have 0 values in df["arco"]
+# I have to transform 0 value in NaN oterwise I cannot divide because I have 0 values in df["arco"]
 df["arco"] = df["arco"].replace({ 0:np.nan})
 df["tortuosity index"] = df["corda"]/df["arco"] 
 
