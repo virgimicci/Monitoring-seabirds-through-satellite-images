@@ -7,10 +7,10 @@ from functions import distance, classification
 filepath = os.path.abspath('') # it returns the wd, this line is imp since we work locally from different devices
 df = pd.read_csv('Data/FileberteAnalisiIndividuale.csv')
 
-#df["time"] =pd.to_timedelta(df['UTC_time'])
-#df["interval"]=df.groupby("device_id").time.diff().dt.seconds.div(60)
+df["time"] =pd.to_timedelta(df['UTC_time'])
+df["interval"]=df.groupby("device_id").time.diff().dt.seconds.div(60)
+df["interval"].mean() # 11.442
 
- 
 # Creating new col with shifted values of lat and long to calculate distances
 df[['Latitude2', 'Longitude2']] = df[['Latitude', 'Longitude']].shift(-1)
 df[['Latitude3', 'Longitude3']] = df[['Latitude', 'Longitude']].shift(-2)
