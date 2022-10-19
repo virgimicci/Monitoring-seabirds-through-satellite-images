@@ -25,8 +25,8 @@ df["arc"] = df.groupby("device_id")["geo_dist"].apply(lambda x: x + x.shift(-1))
 df["chord"] = df.apply(lambda x: geopy.distance.geodesic((x['Latitude'], x['Longitude']),(x['Latitude3'], x['Longitude3'])) if x['Latitude3'] > 0 or x['Longitude3'] > 0 else 0, axis =1)
 
 # I have to transform 0 value in NaN oterwise I cannot divide because I have 0 values in df["arco"]
-df["arco"] = df["arco"].replace({ 0:np.nan})
-df["tortuosity index"] = df["corda"]/df["arco"] 
+df["arc"] = df["arc"].replace({ 0:np.nan})
+df["tortuosity index"] = df["chord"]/df["arc"] 
 
 #create a col with the speed in m/s
 df["speed_m_s"] = df["speed_km_h"].apply(lambda x: x/3.6)
