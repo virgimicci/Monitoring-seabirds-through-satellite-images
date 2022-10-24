@@ -1,0 +1,1 @@
+python auto_batch.py -input_Data_Dir "C:\batch_prove\auto_mine\inputs"  -output_Data_Dir "C:\batch_prove\auto_mine\outputs"  -input_Data_Extention .SEN3  -output_Data_Extention .dim  -snap_graph_Dir "C:\batch_prove\auto_mine\graph_chl.xml"  > C:\batch_prove\auto_mine\command_line.bat"
