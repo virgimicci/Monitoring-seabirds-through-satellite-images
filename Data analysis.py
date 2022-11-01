@@ -72,7 +72,7 @@ df_c = df[["device_id", "timestamp", "Longitude", "Latitude",
     "Speed_m_s", "geo_dist", "arc", "chord",
     "tortuosity index", "birds_activity"]].copy()
 
-df_c.to_file("Data/df_classif_Puffin_yelk.csv")
+df_c.to_csv("Data/df_classif_Puffin_yelk.csv")
 
 
 
