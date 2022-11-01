@@ -10,8 +10,8 @@ filepath = os.path.abspath('') # it returns the wd, this line is imp since we wo
 berta = "Data/df_Calonectris diomedea.csv"
 
 
-# "Data/Puffinus yelkouan Montecristo/points.csv"
-# "Data/Scopoli's Shearwater, Zenatello, Tuscan Archipelago/points.csv"
+# "Data/Puffinus yelkouan Montecristo.csv"
+# "Data/Scopoli's Shearwater, Zenatello, Tuscan Archipelago.csv"
 filename = "Data/Scopoli's Shearwater, Zenatello, Tuscan Archipelago.csv"
 rslt_df = pd.read_csv(filename)
 
