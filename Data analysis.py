@@ -10,7 +10,7 @@ filepath = os.path.abspath('') # it returns the wd, this line is imp since we wo
 
 # "Data/df_Puffinus yelkouan.csv"
 # "Data/df_Calonectris diomedea.csv"
-filename = "Data/df_Puffinus yelkouan.csv"
+filename = "Data/df_Calonectris diomedea.csv"
 df = pd.read_csv(filename)
 
 # get time col
@@ -78,7 +78,6 @@ df_c = df[["device_id", "timestamp", "Longitude", "Latitude",
     "Speed_m_s", "geo_dist", "arc", "chord",
     "tortuosity index", "birds_activity1", "birds_activity2"]].copy()
 
-df_c.to_csv("Data/df_classif_Puffin_yelk.csv")
-
-
+df_c.reset_index(drop=True, inplace=True)
+df_c.to_csv("Data/df_classif_Calonec_diom.zip", compression='gzip')
 
