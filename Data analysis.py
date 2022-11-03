@@ -1,13 +1,9 @@
 import pandas as pd
-import geopandas as gpd
-import numpy as np
 import os
-import geopy.distance
-from shapely.geometry import Point
-import matplotlib.pyplot as plt
-import seaborn as sns
-import contextily as ctx
-from functions import  classification
+import numpy as np
+# import geopy.distance
+# import contextily as ctx
+from functions import  classification, classification2
 from haversine import haversine
 
 filepath = os.path.abspath('') # it returns the wd, this line is imp since we work locally from different devices
@@ -23,8 +19,8 @@ df['time'] = pd.to_datetime(df["timestamp"]).dt.time
 df['date'] = pd.to_datetime(df["timestamp"]).dt.date
 
 # get the interval
-df["time"] = pd.to_timedelta(df['time'].astype(str))
-df["interval"]=df.groupby("device_id").time.diff().dt.seconds.div(60)
+df['time_delta'] = pd.to_timedelta(df['time'].astype(str))
+df["interval"]=df.groupby("device_id").time_delta.diff().dt.seconds.div(60)
 df["interval"].mean() 
 
 # Drop fix with an interval > 10 min 
@@ -61,17 +57,26 @@ df["median"].fillna(df["Speed_m_s"], inplace=True)
 
 # Creation of a new col where we classify 
 # the bird action of Travelling(T), Foraging (F) and Resting (R)
+# We use two methods
+
+# Method 1
 # in relation to their speed velocity and the tortuosity index (arc/chord)
 # see classification function in functions.py
 
-df['birds_activity'] = df.apply(classification, axis=1)
+df['birds_activity1'] = df.apply(classification, axis=1)
 
-sum(df['birds_activity'] == "F")
+# Method 2
+# in relation to their speed velocity and the day time
+# see classification2 function in functions.py
+
+df['birds_activity2'] = df.apply(classification2, axis=1)
+
+# sum(df['birds_activity'] == "F")
 
 # I made a df with the col that i needed 
 df_c = df[["device_id", "timestamp", "Longitude", "Latitude", 
     "Speed_m_s", "geo_dist", "arc", "chord",
-    "tortuosity index", "birds_activity"]].copy()
+    "tortuosity index", "birds_activity1", "birds_activity2"]].copy()
 
 df_c.to_csv("Data/df_classif_Puffin_yelk.csv")
 
