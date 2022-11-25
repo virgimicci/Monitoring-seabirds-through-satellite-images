@@ -9,19 +9,16 @@
 
 # load libs and set wd
 library (plyr) ## relevel and other nice stuff with tables
-#library(adehabitatLT) #animal movement
-##library(chron) # time handling
-#library(spatstat) #not sure I need it
 library(move)
-library(recurse)
+library(recurse) #activity analysis
 library(scales)
 library(sp)
-library(bayesmove) #prepare data in one command
+library(bayesmove) #prepare movement data in one command
 library(ggplot2)
 
 setwd("/data/gitlab/Monitoring-seabirds-through-satellite-images/" )
 
-#load data
+#load data P. yelkouan
 
 yelkouan <- read.csv("/data/gitlab/Monitoring-seabirds-through-satellite-images/Data/berta_minore_class_UTM.csv")
 #https://rdrr.io/cran/bayesmove/man/prep_data.html
@@ -32,13 +29,14 @@ yelkouan$date <- as.POSIXct(yelkouan$timestamp)
 yelkouan$device_id <- as.factor(yelkouan$device_id)
 yelkouan$birds_activity1 <- as.factor(yelkouan$birds_activity1)
 yelkouan$birds_activity2 <- as.factor(yelkouan$birds_activity2)
+yelkouan$Tortuosity <- "T>0.98" 
+yelkouan[yelkouan$tortuosity.index <0.98,  ]$Tortuosity <- "T<0.98" 
+yelkouan$Tortuosity <- as.factor(yelkouan$Tortuosity)
 #calculate step lengths and turning angles
 tracks <- prep_data(dat = yelkouan, coord.names =  c("xcoord","ycoord"), id = "device_id")
 
 #summary
-
 summary(tracks)
-
 tracks <- na.omit(tracks)
 #col: step length (step), 
 #turning angle (angle), 
@@ -53,9 +51,25 @@ tracks <-tracks[tracks$dt < 1000 ,  ]
 
 tracks <-tracks[tracks$dt != 0 ,  ]
 
+
+#load data with EMbc classification
+EMbC <- read.csv("/data/gitlab/Monitoring-seabirds-through-satellite-images/Data/Classified df/Puffinus yelkouan_EMbC.csv")
+
+EMbC$date <- as.POSIXct(EMbC$timestamp)
+
+EMbC <- EMbC[,-c(1,2)]
+
+a <- join(tracks, EMbC, by="date", type= "left")
+
+summary(a)
+#remove duplicate fields
+a <- a[,-c(17:21)]
+tracks <- a
+tracks$EMbC_classif <- as.factor(tracks$EMbC_classif)
 ############### EDA  #############################
 #explore step length to find best radius ########################
 
+summary(tracks)
 summary(tracks$step)
 
 plot(density(tracks$step))
@@ -72,25 +86,42 @@ hist(tracks[tracks$birds_activity2=="R",]$step, xlab="Step lenght(m)", main="Res
 
 
 boxplot(tracks$step ~tracks$device_id, ylim=c(0,3000), xlab="GPS id", main="Flight lenght", ylab="lenght m")
-
-boxplot(tracks$step ~tracks$birds_activity1, ylim=c(0,10000), xlab="Activity", main="Birds activity 1", ylab="lenght m")
-boxplot(tracks$step ~tracks$birds_activity2, ylim=c(0,8000), xlab="Activity", main="Birds activity 2", ylab="lenght m")
+#boxplot(tracks$step ~tracks$birds_activity1, ylim=c(0,10000), xlab="Activity", main="Birds activity 1", ylab="lenght m")
+#boxplot(tracks$step ~tracks$birds_activity2, ylim=c(0,8000), xlab="Activity", main="Birds activity 2", ylab="lenght m")
 
 ggplot(tracks, aes(birds_activity2,step, fill=birds_activity2))+geom_boxplot()+ylab("Step length(m)" )
 ggplot(tracks, aes(birds_activity1,step, fill=birds_activity1))+geom_boxplot()+ylab("Step length(m)" )
-ggplot(tracks, aes(step, fill=birds_activity1))+geom_histogram()+facet_grid(tracks$birds_activity1)
-ggplot(tracks, aes(step, fill=birds_activity2))+geom_histogram()+facet_grid(tracks$birds_activity2)
+ggplot(tracks, aes(EMbC_classif,step, fill=EMbC_classif))+geom_boxplot()+ylab("Step length(m)" )
+
+#ggplot(tracks, aes(step, fill=birds_activity1))+geom_histogram()+facet_grid(tracks$birds_activity1)
+#ggplot(tracks, aes(step, fill=birds_activity2))+geom_histogram()+facet_grid(tracks$birds_activity2)
+#ggplot(tracks, aes(step, fill=EMbC_classif))+geom_histogram()+facet_grid(tracks$birds_activity2)
+
 ggplot(tracks, aes(birds_activity1,Speed_m_s, fill=birds_activity1))+geom_boxplot()
 ggplot(tracks, aes(birds_activity2,Speed_m_s, fill=birds_activity2))+geom_boxplot()
 ggplot(tracks, aes(birds_activity1,angle, fill=birds_activity1))+geom_boxplot()
 ggplot(tracks, aes(birds_activity2,angle, fill=birds_activity2))+geom_boxplot()
+ggplot(tracks, aes(birds_activity1,Speed_m_s, fill=birds_activity1))+geom_boxplot()+facet_grid(tracks$Tortuosity)
+ggplot(tracks, aes(birds_activity2,Speed_m_s, fill=birds_activity2))+geom_boxplot()+facet_grid(tracks$Tortuosity)
+
+ggplot(tracks, aes(birds_activity1,Speed_m_s, fill=EMbC_classif))+geom_boxplot()
+ggplot(tracks, aes(birds_activity2,Speed_m_s, fill=EMbC_classif))+geom_boxplot()
+
+#COnfronto EMBC Birdss activity1/2 ##############
+ggplot(tracks, aes(EMbC_classif, fill=birds_activity2))+geom_bar()+ggtitle(" EMbC vs Birds activity2")
+ggplot(tracks, aes(EMbC_classif, fill=birds_activity1))+geom_bar()+ggtitle(" EMbC vs Birds activity 1")
+ggplot(tracks, aes(birds_activity1, fill=birds_activity2))+geom_bar()+ggtitle("Birds activity 1 vs 2")
+
 #ggplot(tracks, aes(device_id,Speed_m_s, fill=birds_activity2))+geom_boxplot()+facet_wrap(tracks$birds_activity2)
 #ggplot(tracks, aes(device_id,Speed_m_s, fill=birds_activity1))+geom_boxplot()+facet_grid(tracks$birds_activity1)
 
 
 tapply(tracks$step, tracks$birds_activity1, mean)
+tapply(tracks$step, tracks$birds_activity1, sd)
 tapply(tracks$step, tracks$birds_activity2, mean)
-
+tapply(tracks$step, tracks$birds_activity2, sd)
+tapply(tracks$step, tracks$EMbC_classif, mean)
+tapply(tracks$step, tracks$EMbC_classif, sd)
 #Take birds activity 2 for step lenght
 
 #radius 560 m
@@ -99,7 +130,7 @@ tapply(tracks$step, tracks$birds_activity2, mean)
 library(recurse)
 library(scales)
 library(sp)
-library(fields)
+library(fields) #per grafici
 
 #Recourse analysys of P. Yelkuan
 #https://cran.r-project.org/web/packages/recurse/vignettes/recurse.html
