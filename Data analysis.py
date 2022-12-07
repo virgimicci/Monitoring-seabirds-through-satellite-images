@@ -79,5 +79,5 @@ df_c = df[["device_id", "timestamp", "Longitude", "Latitude",
     "tortuosity index", "birds_activity1", "birds_activity2"]].copy()
 
 df_c.reset_index(drop=True, inplace=True)
-df_c.to_csv("Data/Classified df/df_classif_Calonec_diom.zip", compression='zip')
+df_c.to_csv("Data/df_classif_Calonec_diom.zip", compression='zip')
 
