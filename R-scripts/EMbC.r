@@ -56,5 +56,5 @@ for (i in 1:nlevels(as.factor(df2$ID_num))) {
 
 df$EMbC_classif <- berte.cat[, "Classification"]
 
-write.csv(df, "C:\\Users\\micci\\Desktop\\Monitoring-seabirds-through-satellite-images\\Data\\Calonectris diomedea_EMbC.csv")
+write.csv(df, "C:\\Users\\micci\\Desktop\\Monitoring-seabirds-through-satellite-images\\Data\\Classified df\\Calonectris diomedea_EMbC.csv")
 
