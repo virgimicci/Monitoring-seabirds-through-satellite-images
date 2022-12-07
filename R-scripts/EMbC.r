@@ -5,7 +5,10 @@ library(dplyr)
 wd <- "C:\\Users\\micci\\Desktop\\Monitoring-seabirds-through-satellite-images\\Data"
 setwd(wd)
 
-df <- read.csv("df_Calonectris diomedea.csv")
+# df <- read_csv("df_classif_Calonec_diom")
+# df <- as.data.frame(df)
+
+df <- read.csv("df_classif_Puffin_yelk.csv")
 head(df)
 
 df2 <- df %>% select("timestamp", "Longitude", "Latitude", "device_id")
@@ -34,10 +37,10 @@ embc_l <- list() # questo mi serve per mantenere l'oggetto binClust e poterne os
 
 
 for (i in 1:nlevels(as.factor(df2$ID_num))) {
- 
- ## Creo df con 1 solo animale
- ind.df <- df2[df2$ID_num == i, ] 
- 
+  
+  ## Creo df con 1 solo animale
+  ind.df <- df2[df2$ID_num == i, ] 
+  
   # stbc() is a specific constructor for the behavioural annotation of movement trajectories;
   # return an object of class binClstPath with the bivariate (velocity/turn) clustering of 
   # the trajectory;
@@ -49,12 +52,12 @@ for (i in 1:nlevels(as.factor(df2$ID_num))) {
   # postbc@A, a numeric vector with the output labelling of each location, (the number of the cluster with 
   # the highest likelihood weight, coded as 1:LL, 2:LH, 3:HL, and 4:HH)
   dati <- data.frame(ind.df, Classification = postbc@A, mean_speed = postbc@X[,1])
-
+  
   berte.cat <- rbind(berte.cat, dati)
-    
+  
 }
 
 df$EMbC_classif <- berte.cat[, "Classification"]
 
-write.csv(df, "C:\\Users\\micci\\Desktop\\Monitoring-seabirds-through-satellite-images\\Data\\Classified df\\Calonectris diomedea_EMbC.csv")
+write.csv(df, "C:\\Users\\micci\\Desktop\\Monitoring-seabirds-through-satellite-images\\Data\\Classified df\\Calonec_diom_classif.csv")
 
