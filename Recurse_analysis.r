@@ -6,6 +6,7 @@ wd <- "C:\\Users\\micci\\Desktop\\Monitoring-seabirds-through-satellite-images\\
 setwd(wd)
 
 df <- read.csv("GeoPY_UTM.csv") %>% select( "location.long", "location.lat", "timestamp","tag.local.identifier")
+
 head(df)
 
 ### Prova recurse package ###
