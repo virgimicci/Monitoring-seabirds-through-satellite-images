@@ -2,7 +2,7 @@ library(EMbC)
 library(dplyr)
 
 
-wd <- "C:\\Users\\micci\\Desktop\\Monitoring-seabirds-through-satellite-images\\Data"
+wd <- "C:\\Users\\micci\\Desktop\\Monitoring-seabirds-through-satellite-images\\Data\\Interm_Classif_df"
 setwd(wd)
 
 # df <- read_csv("df_classif_Calonec_diom")
