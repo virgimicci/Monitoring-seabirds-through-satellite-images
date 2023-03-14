@@ -8,7 +8,7 @@ setwd(wd)
 # df <- read_csv("df_classif_Calonec_diom")
 # df <- as.data.frame(df)
 
-df <- read.csv("df_classif_Puffin_yelk.csv")
+df <- read.csv("Interm_Classif_df\\df_classif_Puffin_yelk.csv")
 head(df)
 
 df2 <- df %>% select("timestamp", "Longitude", "Latitude", "device_id")
